@@ -12,7 +12,11 @@ connectDB();
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'], // Dono port allow kar diye
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:5174', 
+    'https://candid-cannoli-8ce55e.netlify.app' // Aapka live frontend link joda
+  ], 
   credentials: true 
 }));
 app.use(express.json());
