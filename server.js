@@ -15,7 +15,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173', 
     'http://localhost:5174', 
-    'https://candid-cannoli-8ce55e.netlify.app' // Aapka live frontend link joda
+    'https://candid-cannoli-8ce55e.netlify.app'
   ], 
   credentials: true 
 }));
