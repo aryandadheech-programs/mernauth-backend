@@ -17,7 +17,9 @@ app.use(cors({
     'http://localhost:5174', 
     'https://loginauthenticationformar.netlify.app'
   ], 
-  credentials: true 
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // 👈 Ye add karo
+  allowedHeaders: ["Content-Type", "Authorization"] // 👈 Ye sabse zaroori hai
 }));
 app.use(express.json());
 app.use(cookieParser());
