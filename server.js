@@ -15,7 +15,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173', 
     'http://localhost:5174', 
-    'https://candid-cannoli-8ce55e.netlify.app'
+    'https://loginauthenticationformar.netlify.app'
   ], 
   credentials: true 
 }));
