@@ -2,6 +2,7 @@ const User = require('./user');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 
+// GENERATE TOKEN
 const generateToken = (userId) => {
 
   const secretKey =
@@ -15,7 +16,7 @@ const generateToken = (userId) => {
 };
 
 // SIGNUP
-exports.signup = async (req, res) => {
+const signup = async (req, res) => {
 
   const errors = validationResult(req);
 
@@ -29,7 +30,8 @@ exports.signup = async (req, res) => {
 
   try {
 
-    const existingUser = await User.findOne({ email });
+    const existingUser =
+      await User.findOne({ email });
 
     if (existingUser) {
       return res.status(400).json({
@@ -43,7 +45,8 @@ exports.signup = async (req, res) => {
       password
     });
 
-    const token = generateToken(user._id);
+    const token =
+      generateToken(user._id);
 
     return res.status(201).json({
       success: true,
@@ -67,7 +70,7 @@ exports.signup = async (req, res) => {
 };
 
 // LOGIN
-exports.login = async (req, res) => {
+const login = async (req, res) => {
 
   const errors = validationResult(req);
 
@@ -81,7 +84,8 @@ exports.login = async (req, res) => {
 
   try {
 
-    const user = await User.findOne({ email });
+    const user =
+      await User.findOne({ email });
 
     if (!user) {
       return res.status(401).json({
@@ -98,7 +102,8 @@ exports.login = async (req, res) => {
       });
     }
 
-    const token = generateToken(user._id);
+    const token =
+      generateToken(user._id);
 
     return res.status(200).json({
       success: true,
@@ -121,8 +126,26 @@ exports.login = async (req, res) => {
   }
 };
 
+// LOGOUT
+const logout = async (req, res) => {
+
+  return res.status(200).json({
+    success: true,
+    message: 'Logout successful'
+  });
+};
+
+// GET ME
+const getMe = async (req, res) => {
+
+  return res.status(200).json({
+    success: true,
+    user: req.user
+  });
+};
+
 // GET USERS
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
 
   try {
 
@@ -144,7 +167,7 @@ exports.getAllUsers = async (req, res) => {
 };
 
 // DELETE USER
-exports.deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
 
   try {
 
@@ -152,7 +175,7 @@ exports.deleteUser = async (req, res) => {
 
     if (userId === req.user.id.toString()) {
       return res.status(400).json({
-        message: 'You cannot delete yourself'
+        message: 'Cannot delete yourself'
       });
     }
 
@@ -176,4 +199,13 @@ exports.deleteUser = async (req, res) => {
       message: 'Delete failed'
     });
   }
+};
+
+module.exports = {
+  signup,
+  login,
+  logout,
+  getMe,
+  getAllUsers,
+  deleteUser
 };
