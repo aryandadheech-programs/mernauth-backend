@@ -4,7 +4,13 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true, trim: true },
   email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password: { type: String, required: true, minlength: 6 }
+  password: { type: String, required: true, minlength: 6 },
+  // 👇 Ye naya field add kiya hai user management ke liye
+  role: { 
+    type: String, 
+    default: 'user', 
+    enum: ['user', 'admin'] 
+  }
 }, { timestamps: true });
 
 // Hash password before saving to database (Updated v8+ compatible)

@@ -37,11 +37,11 @@ exports.signup = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      user: { id: user._id, name: user.name, email: user.email }
+      // 👇 Yahan 'role' add kiya hai taaki frontend ko register hote hi pata chal sake
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
     
   } catch (error) {
-    // YEH LINES TERMINAL PAR ASLI ERROR DIKHAYENGI (AGAR AB BHI KOI DIKKAT HOGI TOH)
     console.log("============== ASLI ERROR YAHAN HAI ==============");
     console.error(error);
     console.log("==================================================");
@@ -69,7 +69,8 @@ exports.login = async (req, res) => {
     generateToken(res, user._id);
     return res.status(200).json({
       success: true,
-      user: { id: user._id, name: user.name, email: user.email }
+      // 👇 Yahan bhi 'role' add kiya hai taaki login ke waqt role mil jaye
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
     });
   } catch (error) {
     return res.status(500).json({ message: 'Server Error during login' });
@@ -90,9 +91,47 @@ exports.logout = (req, res) => {
 // @route   GET /api/auth/me
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    return res.status(200).json({ success: true, user });
+    // req.user hume authmiddleware se mil raha hai
+    return res.status(200).json({ success: true, user: req.user });
   } catch (error) {
     return res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// =========================================================================
+// 👇 USER MANAGEMENT CONTROLLERS (Naye functions jo dashboard ke liye hain)
+// =========================================================================
+
+// @desc    Get all users list
+// @route   GET /api/auth/users
+exports.getAllUsers = async (req, res) => {
+  try {
+    // Saare users nikal rahe hain par unka password nahi bhejenge security ke liye
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
+    return res.status(200).json({ success: true, users });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error fetching users from database' });
+  }
+};
+
+// @desc    Delete a user by ID
+// @route   DELETE /api/auth/users/:id
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Admin khud ko hi delete na karle, uska ek check laga dete hain
+    if (userId === req.user.id.toString()) {
+      return res.status(400).json({ message: "You cannot delete your own admin account!" });
+    }
+
+    const user = await User.findByIdAndDelete(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: 'Error deleting user' });
   }
 };
